@@ -90,3 +90,17 @@ func (t *Todos) Load(filename string) error {
 
 	return nil
 }
+
+// when add todo, write it back to the file
+// method store
+func (t *Todos) Store(filename string) error {
+	// marshal the file
+	data, err := json.Marshal(t)
+	if err != nil {
+		return err
+	}
+
+	// write back data to the file
+	return ioutil.WriteFile(filename, data, 0644)
+
+}
