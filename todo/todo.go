@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 	"time"
+
+	"github.com/alexeyco/simpletable"
 )
 
 // create data strcuture
@@ -108,9 +110,53 @@ func (t *Todos) Store(filename string) error {
 
 // method print
 func (t *Todos) Print() {
-	// iterate the data
-	for i, item := range *t {
-		i++
-		fmt.Printf("%d - %s\n", i, item.Task)
+	// // iterate the data
+	// for i, item := range *t {
+	// 	i++
+	// 	fmt.Printf("%d - %s\n", i, item.Task)
+	// }
+
+	// add thirdparty library simple table
+	// create instance of the table
+	table := simpletable.New()
+
+	// table header
+	table.Header = &simpletable.Header{
+		Cells: []*simpletable.Cell{
+			{Align: simpletable.AlignCenter, Text: "#"},
+			{Align: simpletable.AlignCenter, Text: "Task"},
+			{Align: simpletable.AlignCenter, Text: "Done?"},
+			{Align: simpletable.AlignRight, Text: "CreatedAt"},
+			{Align: simpletable.AlignRight, Text: "CompletedAt"},
+		},
 	}
+
+	// multidimensional array
+	var cells [][]*simpletable.Cell
+
+	// iterate every item in table
+	for idx, item := range *t {
+		idx++
+		cells = append(cells, *&[]*simpletable.Cell{
+			{Text: fmt.Sprintf("%d", idx)},
+			{Text: item.Task},
+			{Text: fmt.Sprintf("%t", item.Done)},
+			{Text: item.CreatedAt.Format(time.RFC822)},
+			{Text: item.CompletedAt.Format(time.RFC822)},
+		})
+	}
+
+	// table body
+	table.Body = &simpletable.Body{Cells: cells}
+
+	// table footer
+	table.Footer = &simpletable.Footer{Cells: []*simpletable.Cell{
+		{Align: simpletable.AlignCenter, Span: 5, Text: "Your todos are here"},
+	}}
+
+	// table style
+	table.SetStyle(simpletable.StyleUnicode)
+
+	// print table
+	table.Println()
 }
