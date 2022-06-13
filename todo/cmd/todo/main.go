@@ -37,8 +37,17 @@ func main() {
 	// switch case
 	switch {
 	case *add:
+
+		task, err := getInput(os.Stdin, flag.Args()...)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		todos.Add(task)
+
 		todos.Add("Sample todo")
-		err := todos.Store(todoFile)
+		err = todos.Store(todoFile)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
